@@ -1,0 +1,27 @@
+experiment:
+  name: "hera-r-gpt2-sae"
+  device: "cuda" # 如果没有N卡，改为 "cpu"
+  seed: 42
+
+model:
+  name: "gpt2-small"
+
+sae:
+  release: "gpt2-small-res-jb"
+  id: "blocks.8.hook_resid_pre" 
+  threshold: 2.0 
+
+evolution:
+  target_layers: [8]
+  learning_rate: 0.01
+  max_rank: 1 
+  top_k_features: 3
+
+immune:
+  max_js_divergence: 0.15 
+  max_ppl_spike: 1.5 
+  max_cosine_drift: 0.05 
+
+logging:
+  verbose: true
+  save_dir: "logs/"
