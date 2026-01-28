@@ -1,0 +1,212 @@
+# H.E.R.A.-R Research Configuration
+# Optimized for research experiments and reproducibility
+
+experiment:
+  name: "hera-r-research-experiment"
+  device: "cuda"  # Use "cpu" for maximum reproducibility
+  seed: 42  # Fixed seed for reproducibility
+  deterministic: true  # Enable deterministic algorithms
+
+model:
+  name: "gpt2-small"
+  # Research variants can include:
+  # - "gpt2-medium"
+  # - "gpt2-large"
+  # - "gpt2-xl"
+
+sae:
+  release: "gpt2-small-res-jb"
+  id: "blocks.8.hook_resid_pre"
+  threshold: 2.0
+  # Alternative SAE configurations for research:
+  # release: "gpt2-small-res-jb"
+  # id: "blocks.4.hook_resid_pre"  # Different layer
+  # threshold: 1.5  # More sensitive
+
+evolution:
+  target_layers: [8]  # Layer to evolve
+  # Research variations:
+  # - Single layer: [8]
+  # - Multiple layers: [4, 8, 12]
+  # - All layers: list(range(12))
+  
+  learning_rate: 0.01
+  # Learning rate research values:
+  # - Conservative: 0.001
+  # - Moderate: 0.01
+  # - Aggressive: 0.1
+  
+  max_rank: 1  # Rank of weight updates
+  # Rank research:
+  # - Low-rank: 1
+  # - Medium-rank: 3
+  # - Full-rank: null (no rank constraint)
+  
+  top_k_features: 3
+  # Feature selection research:
+  # - Selective: 1
+  # - Moderate: 3
+  # - Broad: 10
+
+immune:
+  # Conservative thresholds for research safety
+  max_js_divergence: 0.15
+  # JS divergence research thresholds:
+  # - Very strict: 0.05
+  # - Strict: 0.10
+  # - Moderate: 0.15
+  # - Lenient: 0.25
+  
+  max_ppl_spike: 1.5
+  # Perplexity spike research thresholds:
+  # - Very strict: 1.2
+  # - Strict: 1.3
+  # - Moderate: 1.5
+  # - Lenient: 2.0
+  
+  max_cosine_drift: 0.05
+  # Cosine drift research thresholds:
+  # - Very strict: 0.02
+  # - Strict: 0.03
+  # - Moderate: 0.05
+  # - Lenient: 0.10
+
+logging:
+  verbose: true
+  save_dir: "logs/research_experiments"
+  log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  save_checkpoints: true
+  checkpoint_interval: 100  # Save checkpoint every N steps
+
+research:
+  # Research-specific settings
+  metrics:
+    - "js_divergence"
+    - "perplexity"
+    - "cosine_similarity"
+    - "feature_activation"
+    - "weight_change_norm"
+  
+  evaluation:
+    probe_sentences: "data/reference_probes.json"
+    evaluation_interval: 10  # Evaluate every N steps
+    save_predictions: true
+  
+  reproducibility:
+    fixed_seed: true
+    deterministic_algorithms: true
+    save_random_state: true
+  
+  analysis:
+    feature_analysis: true
+    weight_analysis: true
+    activation_analysis: true
+    save_visualizations: true
+
+# Experiment variations for ablation studies
+variations:
+  # Uncomment to test different configurations
+  
+  # Variation 1: Conservative evolution
+  # evolution:
+  #   learning_rate: 0.001
+  #   top_k_features: 1
+  # immune:
+  #   max_js_divergence: 0.05
+  #   max_ppl_spike: 1.2
+  
+  # Variation 2: Aggressive evolution
+  # evolution:
+  #   learning_rate: 0.1
+  #   top_k_features: 10
+  # immune:
+  #   max_js_divergence: 0.25
+  #   max_ppl_spike: 2.0
+  
+  # Variation 3: Multi-layer evolution
+  # evolution:
+  #   target_layers: [4, 8, 12]
+  #   learning_rate: 0.005
+  
+  # Variation 4: Different SAE layer
+  # sae:
+  #   id: "blocks.4.hook_resid_pre"
+  #   threshold: 1.5
+
+# Research dataset configuration
+datasets:
+  evolution_prompts:
+    - path: "data/evolution_prompts.txt"
+      description: "Prompts for evolution experiments"
+    
+    - path: "data/domain_specific_prompts.json"
+      description: "Domain-specific prompts for targeted evolution"
+  
+  evaluation_sets:
+    - name: "general_knowledge"
+      path: "data/general_knowledge_probes.json"
+      description: "General knowledge probe sentences"
+    
+    - name: "domain_specific"
+      path: "data/domain_probes.json"
+      description: "Domain-specific evaluation probes"
+    
+    - name: "adversarial"
+      path: "data/adversarial_probes.json"
+      description: "Adversarial test cases"
+
+# Benchmark configurations
+benchmarks:
+  stability_benchmark:
+    name: "stability_test"
+    steps: 1000
+    metrics: ["js_div", "ppl_ratio", "cosine_drift"]
+    save_frequency: 10
+  
+  adaptation_benchmark:
+    name: "adaptation_test"
+    target_domains: ["science", "technology", "literature"]
+    steps_per_domain: 100
+    metrics: ["domain_accuracy", "forgetting", "adaptation_speed"]
+  
+  safety_benchmark:
+    name: "safety_test"
+    test_cases: "data/safety_test_cases.json"
+    metrics: ["violation_rate", "recovery_success", "response_quality"]
+
+# Output configuration
+output:
+  results_dir: "research_results"
+  formats: ["json", "csv", "yaml"]
+  save_raw_data: true
+  save_processed_data: true
+  compression: true
+  
+  visualization:
+    enabled: true
+    formats: ["png", "pdf", "html"]
+    metrics_plots: true
+    evolution_trajectory: true
+    feature_visualization: true
+
+# Notes for researchers
+_notes: |
+  This configuration is optimized for research experiments.
+  
+  Key features for research:
+  1. Reproducibility: Fixed seeds and deterministic algorithms
+  2. Comprehensive logging: Detailed metrics and checkpoints
+  3. Flexible variations: Easy configuration for ablation studies
+  4. Benchmark support: Built-in benchmark configurations
+  
+  To run a research experiment:
+  1. Copy this file to your experiment directory
+  2. Modify parameters as needed for your research question
+  3. Use the research_experiment.py template
+  4. Run with: python research_experiment.py --config your_config.yaml
+  
+  Recommended research questions:
+  - How does learning rate affect evolution stability?
+  - What is the optimal feature selection threshold?
+  - How do different SAE layers affect evolution?
+  - What are the trade-offs between evolution speed and safety?
