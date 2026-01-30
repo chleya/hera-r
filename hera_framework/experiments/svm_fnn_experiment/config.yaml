@@ -1,0 +1,109 @@
+# 实验配置
+experiment:
+  name: "svm_fnn_analysis_1"
+  description: "SVM分析FNN隐藏层激活向量的可行性验证"
+  date: "2026-01-29"
+  random_seed: 42
+
+# 数据配置
+data:
+  dataset: "mnist"
+  num_classes: 10
+  simplified_classes: 3  # 简化版本使用前3个类别
+  train_split: 0.8
+  test_split: 0.2
+  normalize: true
+  download: true
+
+# FNN模型配置
+fnn_models:
+  simple_fnn:
+    name: "SimpleFNN"
+    layers: [784, 128, 10]  # 输入层, 隐藏层, 输出层
+    activation: "relu"
+    dropout: 0.0
+  
+  medium_fnn:
+    name: "MediumFNN" 
+    layers: [784, 256, 128, 10]  # 输入层, 隐藏层1, 隐藏层2, 输出层
+    activation: "relu"
+    dropout: 0.1
+
+# 训练配置
+training:
+  batch_size: 64
+  epochs: 10
+  learning_rate: 0.001
+  optimizer: "adam"
+  loss_function: "cross_entropy"
+
+# SVM分析配置
+svm_analysis:
+  kernel_types: ["linear", "rbf"]
+  c_value: 1.0
+  gamma: "scale"  # for RBF kernel
+  test_size: 0.2
+  cross_validation_folds: 5
+
+# 激活向量提取
+activation_extraction:
+  target_layers: ["hidden"]  # 提取隐藏层激活
+  extraction_method: "forward_hook"
+  save_format: "numpy"
+  normalize_activations: true
+
+# 可视化配置
+visualization:
+  pca_components: 2
+  plot_style: "seaborn"
+  save_figures: true
+  figure_format: "png"
+  dpi: 300
+
+# 输出配置
+output:
+  results_dir: "./results"
+  models_dir: "./saved_models"
+  logs_dir: "./logs"
+  figures_dir: "./figures"
+  
+# 实验组配置
+experiment_groups:
+  group_a:
+    name: "simple_fnn_linear_svm"
+    fnn_model: "simple_fnn"
+    dataset: "full_mnist"
+    svm_kernel: "linear"
+    samples: 1000
+    
+  group_b:
+    name: "simple_fnn_rbf_svm"
+    fnn_model: "simple_fnn"
+    dataset: "full_mnist"
+    svm_kernel: "rbf"
+    samples: 1000
+    
+  group_c:
+    name: "medium_fnn_linear_svm"
+    fnn_model: "medium_fnn"
+    dataset: "simplified_mnist"
+    svm_kernel: "linear"
+    samples: 1000
+    
+  group_d:
+    name: "random_baseline"
+    baseline: true
+    samples: 1000
+
+# 性能指标
+metrics:
+  primary: ["accuracy", "f1_score"]
+  secondary: ["training_time", "inference_time"]
+  visualization: ["pca_plot", "decision_boundary", "confusion_matrix"]
+
+# 日志配置
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "experiment.log"
+  console: true
